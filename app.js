@@ -69,19 +69,14 @@ function latestHeight(callback) {
 }
 
 function blocksAtHeight(height, callback) {
-	console.log(1);
 	var url = 'http://blockchain.info/block-height/' + height + '?format=json';
 	http.get(url, function(res) {
-		console.log(2);
 		accumulate(res, function(body) {
-			console.log(3);
 			try {
-				console.log(4);	
 				var count = JSON.parse(body).blocks.length;
 				callback(count);
 			}
 			catch(ex) {
-				console.log(5);
 				callback(-1);
 			}
 		});
@@ -99,5 +94,5 @@ function accumulate(response, callback) {
 }
 
 app.use(express.static(__dirname + '/static'));
-app.listen(8080);
+app.listen(80);
 console.log('listening on port 80');
