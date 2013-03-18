@@ -13,10 +13,18 @@ app.get('/:height?', function(req, res) {
 			return;
 		}
 
-		page = page.replace(/\{YESNO\}/g, info.count > 1 ? '<h1 class="yes">YES</h1>' : '<h1 class="no">NO</h1>');
-		page = page.replace(/\{BLOCK_DESC\}/g, info.count != 1 ? info.count + " blocks" : "Only one block");
-		page = page.replace(/\{HEIGHT\}/g, info.height);
-		res.send(page);
+		if (info.count > 0) {
+			page = page.replace(/\{YESNO\}/g, info.count > 1 ? '<h1 class="yes">YES</h1>' : '<h1 class="no">NO</h1>');
+			page = page.replace(/\{BLOCK_DESC\}/g, info.count != 1 ? info.count + " blocks" : "Only one block");
+			page = page.replace(/\{HEIGHT\}/g, info.height);
+			res.send(page);
+		}
+		else {
+			page = page.replace(/\{YESNO\}/g, '<h1>WAT</h1>');
+			page = page.replace(/\{BLOCK_DESC\}/g, 'Zero blocks');
+			page = page.replace(/\{HEIGHT\}/g, info.height);
+			res.send(page);
+		}
 	}
 
 	fs.readFile(__dirname + '/static/index.html', 'utf8', function (err, data) {
@@ -61,10 +69,21 @@ function latestHeight(callback) {
 }
 
 function blocksAtHeight(height, callback) {
+	console.log(1);
 	var url = 'http://blockchain.info/block-height/' + height + '?format=json';
 	http.get(url, function(res) {
+		console.log(2);
 		accumulate(res, function(body) {
-			callback(JSON.parse(body).blocks.length);
+			console.log(3);
+			try {
+				console.log(4);	
+				var count = JSON.parse(body).blocks.length;
+				callback(count);
+			}
+			catch(ex) {
+				console.log(5);
+				callback(-1);
+			}
 		});
 	});
 }
@@ -80,5 +99,5 @@ function accumulate(response, callback) {
 }
 
 app.use(express.static(__dirname + '/static'));
-app.listen(80);
+app.listen(8080);
 console.log('listening on port 80');
