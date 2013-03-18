@@ -1,0 +1,31 @@
+#box {
+	padding-top: 160px;
+	display: block;
+	margin: 0 auto;
+	width: 400px;
+	text-align: center;
+}
+
+.footer {
+	position: absolute;
+	bottom: 16px;
+	width: 300px;
+}
+
+.contact {
+	left: 20px;
+}
+
+.source {
+	right: 20px;
+	text-align: right;
+}
+
+.donate {
+	display: block;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+	text-align: center;
+	width: 400px;
+}
