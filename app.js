@@ -80,4 +80,5 @@ function accumulate(response, callback) {
 }
 
 app.use(express.static(__dirname + '/static'));
-app.listen(8080);
+app.listen(80);
+console.log('listening on port 80');
