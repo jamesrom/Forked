@@ -3,8 +3,10 @@ var http = require('http');
 var fs = require('fs');
 var app = express();
 
+app.use(express.favicon(__dirname + '/static/favicon.ico'));
+
 app.get('/:height?', function(req, res) {
-	console.log('request made');
+	console.log(new Date().toUTCString() + ': request: /' + (req.params.height ? req.params.height : ''));
 	var page;
 	var info = {};
 
@@ -21,7 +23,7 @@ app.get('/:height?', function(req, res) {
 		}
 		else {
 			page = page.replace(/\{YESNO\}/g, '<h1>WAT</h1>');
-			page = page.replace(/\{BLOCK_DESC\}/g, 'Zero blocks');
+			page = page.replace(/\{BLOCK_DESC\}/g, 'Error: Zero blocks');
 			page = page.replace(/\{HEIGHT\}/g, info.height);
 			res.send(page);
 		}
@@ -63,7 +65,14 @@ function latestHeight(callback) {
 	var url = 'http://blockchain.info/latestblock';
 	http.get(url, function(res) {
 		accumulate(res, function(body) {
-			callback(JSON.parse(body).height);
+			var height;
+			try {
+				height = JSON.parse(body).height;
+			}
+			catch(ex) {
+				height = -1;
+			}
+			callback(height);
 		});
 	});
 }
@@ -72,13 +81,14 @@ function blocksAtHeight(height, callback) {
 	var url = 'http://blockchain.info/block-height/' + height + '?format=json';
 	http.get(url, function(res) {
 		accumulate(res, function(body) {
+			var count;
 			try {
-				var count = JSON.parse(body).blocks.length;
-				callback(count);
+				count = JSON.parse(body).blocks.length;
 			}
 			catch(ex) {
-				callback(-1);
+				count = -1;
 			}
+			callback(count);
 		});
 	});
 }
