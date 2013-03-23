@@ -27,6 +27,13 @@
 	left: 0;
 	right: 0;
 	text-align: center;
-	width: 450px;
+	width: 800px;
 	text-transform: none;
+}
+
+.github {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: 0;
 }

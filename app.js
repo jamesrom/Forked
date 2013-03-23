@@ -10,34 +10,16 @@ app.get('/:height?', function(req, res) {
 	var page;
 	var info = {};
 
-	function buildPage() {
-		if (!info.count || !page) {
-			return;
-		}
-
-		if (info.count > 0) {
-			page = page.replace(/\{YESNO\}/g, info.count > 1 ? '<h1 class="yes">YES</h1>' : '<h1 class="no">NO</h1>');
-			page = page.replace(/\{BLOCK_DESC\}/g, info.count != 1 ? info.count + " blocks" : "Only one block");
-			page = page.replace(/\{HEIGHT\}/g, info.height);
-			res.send(page);
-		}
-		else {
-			page = page.replace(/\{YESNO\}/g, '<h1>WAT</h1>');
-			page = page.replace(/\{BLOCK_DESC\}/g, 'Error: Zero blocks');
-			page = page.replace(/\{HEIGHT\}/g, info.height);
-			res.send(page);
-		}
-	}
-
-	fs.readFile(__dirname + '/static/index.html', 'utf8', function (err, data) {
-		if (err) {
+	fs.readFile(__dirname + '/static/index.html', 'utf8', function (error, data) {
+		if (error) {
 			res.send("Error");
 			return;
 		}
 
 		page = data;
-		// just incase fs is slower than http for some reason
-		buildPage();
+
+		// just in case fs is slower than http for some reason
+		buildPage(res, info, page);
 	});
 
 	// handle height parameter
@@ -46,7 +28,7 @@ app.get('/:height?', function(req, res) {
 		if (!isNaN(info.height)) {
 			blocksAtHeight(info.height, function(count) {
 				info.count = count;
-				buildPage();
+				buildPage(res, info, page);
 			});
 			return;
 		}
@@ -56,10 +38,29 @@ app.get('/:height?', function(req, res) {
 		info.height = height;
 		blocksAtHeight(height, function(count) {
 			info.count = count;
-			buildPage();
+			buildPage(res, info, page);
 		});
 	});
 });
+
+function buildPage(res, info, page) {
+	if (!info.count || !page) {
+		return;
+	}
+
+	if (info.count > 0) {
+		page = page.replace(/\{YESNO\}/g, info.count > 1 ? '<h1 class="yes">YES</h1>' : '<h1 class="no">NO</h1>');
+		page = page.replace(/\{BLOCK_DESC\}/g, info.count != 1 ? info.count + " blocks" : "Only one block");
+		page = page.replace(/\{HEIGHT\}/g, info.height);
+		res.send(page);
+	}
+	else {
+		page = page.replace(/\{YESNO\}/g, '<h1>WAT</h1>');
+		page = page.replace(/\{BLOCK_DESC\}/g, 'Error: Zero blocks');
+		page = page.replace(/\{HEIGHT\}/g, info.height);
+		res.send(page);
+	}
+}
 
 function latestHeight(callback) {
 	var url = 'http://blockchain.info/latestblock';
