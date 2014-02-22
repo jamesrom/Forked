@@ -1,7 +1,7 @@
 var express = require('express');
 var http = require('http');
 var fs = require('fs');
-var app = express();
+var app = exports.app = express();
 
 app.use(express.favicon(__dirname + '/static/favicon.ico'));
 
@@ -105,5 +105,5 @@ function accumulate(response, callback) {
 }
 
 app.use(express.static(__dirname + '/static'));
-app.listen(80, "istheblockchainforked.com");
+//app.listen(80);
 console.log('listening on port 80');
