@@ -105,5 +105,5 @@ function accumulate(response, callback) {
 }
 
 app.use(express.static(__dirname + '/static'));
-app.listen(80);
+app.listen(80, "istheblockchainforked.com");
 console.log('listening on port 80');
